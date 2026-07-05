@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FanExpress — Closer to the Stars You Love.</title>
+<meta name="description" content="Join exclusive fan communities, shop authentic merchandise, and unlock premium memberships with your favorite celebrities — all through FanExpress." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind (CDN / JIT) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Anton', 'sans-serif'],
+          body: ['Manrope', 'sans-serif'],
+          mono: ['"Space Mono"', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    --bg:#0B0710;
+    --bg-soft:#120C1B;
+    --surface:#1B1428;
+    --surface-2:#241A33;
+    --text:#F5F1FA;
+    --text-muted:#9C90B3;
+    --border:rgba(255,255,255,.09);
+    --accent-pink:#FF2E7C;
+    --accent-gold:#FFB627;
+    --accent-cyan:#2FE8DD;
+    --shadow: 0 24px 70px rgba(0,0,0,.55);
+  }
+  html.light{
+    --bg:#FBF8FF;
+    --bg-soft:#F3EDFB;
+    --surface:#FFFFFF;
+    --surface-2:#F7F2FD;
+    --text:#170C28;
+    --text-muted:#6A5E86;
+    --border:rgba(23,12,40,.1);
+    --shadow: 0 24px 60px rgba(90,60,140,.14);
+  }
+
+  * { scroll-behavior: smooth; }
+  html, body { background: var(--bg); color: var(--text); }
+  body{ font-family:'Manrope',sans-serif; transition: background .4s ease, color .4s ease; overflow-x:hidden; }
+  h1,h2,h3,h4, .display { font-family:'Anton',sans-serif; letter-spacing:.01em; text-transform:uppercase; }
+  .mono { font-family:'Space Mono',monospace; }
+
+  .gradient-text{
+    background: linear-gradient(100deg, var(--accent-pink), var(--accent-gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .gradient-bg{ background: linear-gradient(100deg, var(--accent-pink), var(--accent-gold)); }
+  .gradient-ring{
+    background: linear-gradient(120deg, var(--accent-pink), var(--accent-cyan), var(--accent-gold), var(--accent-pink));
+    background-size: 300% 300%;
+    animation: hue-shift 6s ease infinite;
+  }
+  @keyframes hue-shift{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+  .glass{
+    background: color-mix(in srgb, var(--surface) 65%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid var(--border);
+  }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  ::selection{ background: var(--accent-pink); color:#fff; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar{ width:10px; }
+  ::-webkit-scrollbar-track{ background: var(--bg); }
+  ::-webkit-scrollbar-thumb{ background: var(--surface-2); border-radius:8px; }
+
+  /* Hero backdrop */
+  .spotlight-field{
+    position:absolute; inset:0; overflow:hidden; z-index:0;
+  }
+  .spotlight{
+    position:absolute; width:70vw; height:70vw; border-radius:50%;
+    filter: blur(90px); opacity:.35; mix-blend-mode: screen;
+  }
+  html.light .spotlight{ opacity:.28; mix-blend-mode: multiply; }
+
+  @keyframes float-slow{ 0%,100%{ transform: translateY(0) rotate(var(--r,0deg)); } 50%{ transform: translateY(-18px) rotate(var(--r,0deg)); } }
+  .floaty{ animation: float-slow 6s ease-in-out infinite; }
+
+  /* Fan Pass card (signature element) */
+  .fan-pass{
+    --tiltX: 0deg; --tiltY: 0deg;
+    transform: perspective(1100px) rotateX(var(--tiltX)) rotateY(var(--tiltY));
+    transition: transform .15s ease-out;
+    position:relative;
+    border-radius: 22px;
+    background:
+      radial-gradient(120% 140% at 10% 0%, rgba(255,255,255,.18), transparent 55%),
+      linear-gradient(155deg, #1c1030, #2b1240 45%, #120a22 100%);
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.15);
+    overflow:hidden;
+    border: 1px solid rgba(255,255,255,.14);
+  }
+  .fan-pass::before{
+    content:"";
+    position:absolute; inset:-40%;
+    background: conic-gradient(from 0deg, #ff2e7c, #2fe8dd, #ffb627, #ff2e7c);
+    opacity:.18;
+    animation: hue-shift 8s linear infinite;
+    mix-blend-mode: screen;
+  }
+  .fan-pass .grommet{
+    width:14px; height:14px; border-radius:50%;
+    background: var(--bg);
+    border: 3px solid rgba(255,255,255,.35);
+  }
+  .fan-pass .notch{
+    position:absolute; top:-12px; width:24px; height:24px; border-radius:50%;
+    background: var(--bg);
+  }
+  .qr-fake{
+    display:grid; grid-template-columns: repeat(6,1fr); gap:2px;
+    width:64px; height:64px; padding:6px; background:#fff; border-radius:6px;
+  }
+  .qr-fake span{ background:#0B0710; border-radius:1px; }
+
+  /* ticket notch cards for pricing */
+  .ticket{ position:relative; }
+  .ticket::before, .ticket::after{
+    content:""; position:absolute; width:26px; height:26px; border-radius:50%;
+    background: var(--bg); top:50%; transform:translateY(-50%);
+  }
+  .ticket::before{ left:-13px; }
+  .ticket::after{ right:-13px; }
+
+  .btn-primary{
+    background: linear-gradient(100deg, var(--accent-pink), var(--accent-gold));
+    color:#160A1F; font-weight:800;
+  }
+  .btn-primary:hover{ filter:brightness(1.08); }
+
+  .btn-ghost{
+    border:1px solid var(--border);
+    color: var(--text);
+    background: color-mix(in srgb, var(--surface) 50%, transparent);
+  }
+
+  .whatsapp-btn{
+    background:#1DA851; color:#fff; font-weight:700;
+  }
+  .whatsapp-btn:hover{ background:#189248; }
+
+  details > summary{ list-style:none; cursor:pointer; }
+  details > summary::-webkit-details-marker{ display:none; }
+  details[open] .chev{ transform: rotate(45deg); }
+
+  .marquee-track{
+    display:flex; gap:2.5rem; white-space:nowrap;
+    animation: marquee 26s linear infinite;
+  }
+  @keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  @media (prefers-reduced-motion: reduce){
+    .floaty, .fan-pass::before, .marquee-track, .gradient-ring{ animation: none !important; }
+    .reveal{ transition:none; opacity:1; transform:none; }
+  }
+</style>
+</head>
+
+<body class="font-body">
+
+<!-- ============ NAV ============ -->
+<header id="top" class="fixed top-0 inset-x-0 z-50">
+  <nav class="glass mx-3 mt-3 rounded-2xl md:mx-6 md:mt-4">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-2">
+        <span class="display text-xl tracking-widest">FAN<span class="gradient-text">EXPRESS</span></span>
+      </a>
+
+      <div class="hidden lg:flex items-center gap-8 text-sm font-semibold" style="color:var(--text-muted)">
+        <a href="#celebrities" class="hover:text-[var(--text)] transition">Celebrities</a>
+        <a href="#memberships" class="hover:text-[var(--text)] transition">Memberships</a>
+        <a href="#fancards" class="hover:text-[var(--text)] transition">Fan Cards</a>
+        <a href="#store" class="hover:text-[var(--text)] transition">Store</a>
+        <a href="#events" class="hover:text-[var(--text)] transition">Events</a>
+        <a href="#faq" class="hover:text-[var(--text)] transition">FAQ</a>
+      </div>
+
+      <div class="flex items-center gap-2 md:gap-3">
+        <button id="themeToggle" aria-label="Toggle dark and light mode" class="w-10 h-10 rounded-full btn-ghost flex items-center justify-center">
+          <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+          <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V2M12 22v-2M4 12H2m20 0h-2M5.6 5.6L4.2 4.2m15.6 1.4l1.4-1.4M5.6 18.4l-1.4 1.4m15.6-1.4l1.4 1.4M12 17a5 5 0 100-10 5 5 0 000 10z"/></svg>
+        </button>
+        <button id="waNavBtn" class="hidden sm:inline-flex btn-primary text-sm px-4 py-2.5 rounded-full">Join FanExpress</button>
+        <button id="menuBtn" aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-full btn-ghost flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- mobile menu -->
+    <div id="mobileMenu" class="hidden lg:hidden px-5 pb-5 pt-1 flex flex-col gap-3 text-sm font-semibold" style="color:var(--text-muted)">
+      <a href="#celebrities">Celebrities</a>
+      <a href="#memberships">Memberships</a>
+      <a href="#fancards">Fan Cards</a>
+      <a href="#store">Store</a>
+      <a href="#events">Events</a>
+      <a href="#faq">FAQ</a>
+      <button class="waBtn btn-primary text-sm px-4 py-2.5 rounded-full mt-1" data-msg="Hello FanExpress, I'd like to join FanExpress. Please assist me.">Join FanExpress</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="relative min-h-[100svh] flex items-center pt-28 pb-16 px-5 md:px-10 overflow-hidden">
+  <div class="spotlight-field">
+    <div class="spotlight" style="background:var(--accent-pink); top:-10%; left:-10%;"></div>
+    <div class="spotlight" style="background:var(--accent-cyan); bottom:-15%; right:-10%;"></div>
+    <div class="spotlight" style="background:var(--accent-gold); top:20%; right:20%; width:40vw; height:40vw;"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center relative z-10">
+    <div class="reveal">
+      <span class="mono text-xs tracking-[0.3em] px-3 py-1 rounded-full border inline-block mb-6" style="border-color:var(--border); color:var(--text-muted)">CLOSER TO THE STARS YOU LOVE</span>
+      <h1 class="display text-[13vw] leading-[0.95] sm:text-6xl lg:text-7xl mb-6">
+        Connect With Your Favorite
+        <span class="gradient-text block">Celebrities</span>
+        Like Never Before.
+      </h1>
+      <p class="text-base md:text-lg max-w-xl mb-9" style="color:var(--text-muted)">
+        Join exclusive fan communities, purchase official merchandise, access premium memberships, and enjoy unforgettable experiences — all in one place.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#celebrities" class="btn-primary px-7 py-4 rounded-full font-bold text-sm inline-flex items-center gap-2">
+          Explore Celebrities
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <button class="waBtn btn-ghost px-7 py-4 rounded-full font-bold text-sm" data-msg="Hello FanExpress, I'd like to join FanExpress. Please assist me.">Join FanExpress</button>
+      </div>
+
+      <div class="flex items-center gap-6 mt-10 text-xs mono" style="color:var(--text-muted)">
+        <div><span class="text-lg font-bold" style="color:var(--text)">120+</span><br>Verified Celebrities</div>
+        <div class="w-px h-8" style="background:var(--border)"></div>
+        <div><span class="text-lg font-bold" style="color:var(--text)">2.4M</span><br>Fans Connected</div>
+        <div class="w-px h-8" style="background:var(--border)"></div>
+        <div><span class="text-lg font-bold" style="color:var(--text)">98%</span><br>Satisfaction</div>
+      </div>
+    </div>
+
+    <!-- Floating fan pass + UI chips -->
+    <div class="relative h-[420px] md:h-[520px] reveal" id="heroVisual">
+      <div class="fan-pass w-64 md:w-72 p-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20" id="heroFanCard">
+        <div class="notch" style="left:calc(50% - 12px)"></div>
+        <div class="relative z-10">
+          <div class="flex justify-between items-start mb-6">
+            <span class="mono text-[10px] tracking-widest" style="color:var(--accent-cyan)">ALL ACCESS PASS</span>
+            <div class="grommet"></div>
+          </div>
+          <p class="display text-2xl text-white leading-tight">ARIA<br>NOVA</p>
+          <p class="mono text-[10px] text-white/60 mt-1">TIER: VIP · #FX-88213</p>
+          <div class="flex items-end justify-between mt-8">
+            <div class="qr-fake" id="heroQr"></div>
+            <div class="text-right">
+              <p class="mono text-[9px] text-white/50">EXPIRES</p>
+              <p class="mono text-[11px] text-white">08 / 2027</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="floaty absolute top-4 right-2 md:right-8 glass rounded-2xl p-3 w-40 z-10" style="--r:-6deg">
+        <p class="text-[10px] mono mb-1" style="color:var(--text-muted)">NOW STREAMING</p>
+        <p class="text-xs font-bold">Behind The Scenes: Solaris Tour</p>
+      </div>
+
+      <div class="floaty absolute bottom-6 left-0 md:left-4 glass rounded-2xl p-3 w-44 z-10" style="--r:5deg; animation-delay:.8s">
+        <p class="text-[10px] mono mb-1" style="color:var(--text-muted)">MERCH DROP</p>
+        <p class="text-xs font-bold">Official Tour Hoodie — $58</p>
+      </div>
+
+      <div class="floaty absolute bottom-24 right-0 md:-right-2 glass rounded-2xl px-4 py-2 z-10" style="--r:3deg; animation-delay:1.4s">
+        <p class="text-xs font-bold flex items-center gap-1">✅ Verified Celebrity</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="border-y py-4" style="border-color:var(--border); background:var(--bg-soft)">
+  <div class="marquee-track">
+    <span class="display text-sm md:text-base" style="color:var(--text-muted)">MUSIC &nbsp;·&nbsp; SPORTS &nbsp;·&nbsp; FILM &nbsp;·&nbsp; COMEDY &nbsp;·&nbsp; INFLUENCERS &nbsp;·&nbsp; MUSIC &nbsp;·&nbsp; SPORTS &nbsp;·&nbsp; FILM &nbsp;·&nbsp; COMEDY &nbsp;·&nbsp; INFLUENCERS</span>
+    <span class="display text-sm md:text-base" style="color:var(--text-muted)">MUSIC &nbsp;·&nbsp; SPORTS &nbsp;·&nbsp; FILM &nbsp;·&nbsp; COMEDY &nbsp;·&nbsp; INFLUENCERS &nbsp;·&nbsp; MUSIC &nbsp;·&nbsp; SPORTS &nbsp;·&nbsp; FILM &nbsp;·&nbsp; COMEDY &nbsp;·&nbsp; INFLUENCERS</span>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-24 grid lg:grid-cols-2 gap-14 items-center">
+  <div class="reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-pink)">ABOUT FANEXPRESS</span>
+    <h2 class="display text-3xl md:text-5xl mt-4 mb-6 leading-tight">A Trusted Stage For<br>Fans &amp; Stars.</h2>
+    <p class="mb-4" style="color:var(--text-muted)">FanExpress is a marketplace built for genuine access — where fans connect directly with verified celebrities through memberships, authentic merchandise, and once-in-a-lifetime experiences.</p>
+    <p style="color:var(--text-muted)">Every profile is verified, every purchase is confirmed by a real person, and every interaction is designed to feel personal — not automated. No middlemen, no counterfeit merch, no guesswork.</p>
+  </div>
+  <div class="grid grid-cols-2 gap-4 reveal">
+    <div class="card rounded-3xl p-6">
+      <p class="display text-3xl gradient-text">100%</p>
+      <p class="text-sm mt-2" style="color:var(--text-muted)">Verified celebrity accounts</p>
+    </div>
+    <div class="card rounded-3xl p-6 mt-8">
+      <p class="display text-3xl gradient-text">24/7</p>
+      <p class="text-sm mt-2" style="color:var(--text-muted)">WhatsApp support team</p>
+    </div>
+    <div class="card rounded-3xl p-6">
+      <p class="display text-3xl gradient-text">SAFE</p>
+      <p class="text-sm mt-2" style="color:var(--text-muted)">Guided, confirmed payments</p>
+    </div>
+    <div class="card rounded-3xl p-6 mt-8">
+      <p class="display text-3xl gradient-text">1:1</p>
+      <p class="text-sm mt-2" style="color:var(--text-muted)">Direct fan engagement</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED CELEBRITIES ============ -->
+<section id="celebrities" class="max-w-7xl mx-auto px-5 md:px-10 py-16">
+  <div class="flex items-end justify-between mb-12 reveal">
+    <div>
+      <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-cyan)">FEATURED CELEBRITIES</span>
+      <h2 class="display text-3xl md:text-5xl mt-4">Who Will You<br>Get Closer To?</h2>
+    </div>
+  </div>
+
+  <div id="celebGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- ============ CELEBRITY PROFILE PREVIEW ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-16">
+  <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-pink)">PROFILE PREVIEW</span>
+  <h2 class="display text-3xl md:text-5xl mt-4 mb-10">Inside A Celebrity Page.</h2>
+
+  <div class="card rounded-3xl overflow-hidden reveal">
+    <div class="h-40 md:h-56 relative" style="background: linear-gradient(120deg,#3a1450,#12081f 60%);">
+      <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1200&q=70" alt="" class="absolute inset-0 w-full h-full object-cover opacity-40">
+    </div>
+    <div class="px-6 md:px-10 pb-10">
+      <div class="flex flex-col md:flex-row md:items-end gap-5 -mt-14 md:-mt-16 mb-8">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300&q=80" alt="Aria Nova" class="w-28 h-28 rounded-2xl object-cover border-4" style="border-color:var(--surface)">
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <h3 class="display text-2xl">Aria Nova</h3>
+            <span class="text-xs px-2 py-1 rounded-full gradient-bg text-[#160A1F] font-bold">✓ Verified</span>
+          </div>
+          <p class="text-sm" style="color:var(--text-muted)">Music · Pop / Orchestral</p>
+        </div>
+        <button class="waBtn whatsapp-btn px-6 py-3 rounded-full text-sm font-bold flex items-center gap-2 self-start md:self-auto" data-msg="Hello FanExpress, I'd like to subscribe to Aria Nova. Please assist me.">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.32 4.95L2 22l5.24-1.37a9.9 9.9 0 004.8 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2zm0 18.18h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.11.82.83-3.03-.2-.31a8.23 8.23 0 01-1.26-4.37c0-4.55 3.7-8.25 8.25-8.25 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 012.42 5.83c0 4.55-3.71 8.22-8.27 8.22zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.24-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14 0-.31-.01-.47-.01-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.06 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+          Chat on WhatsApp
+        </button>
+      </div>
+
+      <p class="mb-8 max-w-2xl" style="color:var(--text-muted)">Aria Nova is a chart-topping vocalist known for weaving orchestral strings through modern pop. Since her debut EP, she's built one of the most devoted fan communities on FanExpress — the Novanites.</p>
+
+      <div class="flex gap-4 mb-10 text-sm">
+        <span class="mono" style="color:var(--text-muted)">🔗 @arianova</span>
+        <span class="mono" style="color:var(--text-muted)">🔗 Nova Sound</span>
+        <span class="mono" style="color:var(--text-muted)">🔗 arianova.fx</span>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-10">
+        <div class="rounded-2xl p-5" style="background:var(--surface-2)">
+          <p class="text-xs mono mb-2" style="color:var(--text-muted)">MEMBERSHIP</p>
+          <p class="font-bold mb-1">VIP Circle — $39.99/mo</p>
+          <p class="text-xs" style="color:var(--text-muted)">Personalized voice notes + early tickets</p>
+        </div>
+        <div class="rounded-2xl p-5" style="background:var(--surface-2)">
+          <p class="text-xs mono mb-2" style="color:var(--text-muted)">MERCHANDISE</p>
+          <p class="font-bold mb-1">Solaris Tour Hoodie — $58</p>
+          <p class="text-xs" style="color:var(--text-muted)">Limited run, signed pieces available</p>
+        </div>
+        <div class="rounded-2xl p-5" style="background:var(--surface-2)">
+          <p class="text-xs mono mb-2" style="color:var(--text-muted)">UPCOMING EVENT</p>
+          <p class="font-bold mb-1">Solaris Tour — Lagos</p>
+          <p class="text-xs" style="color:var(--text-muted)">Aug 14, 2026 · Eko Arena</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-[var(--accent-gold)]">★★★★★</span>
+        <span style="color:var(--text-muted)">4.9 from 3,204 fan reviews</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MEMBERSHIP PLANS ============ -->
+<section id="memberships" class="max-w-7xl mx-auto px-5 md:px-10 py-24">
+  <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-gold)">MEMBERSHIP PLANS</span>
+    <h2 class="display text-3xl md:text-5xl mt-4">Pick Your Level<br>Of Access.</h2>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-8" id="plansGrid"></div>
+</section>
+
+<!-- ============ DIGITAL FAN CARDS ============ -->
+<section id="fancards" class="py-24" style="background:var(--bg-soft)">
+  <div class="max-w-7xl mx-auto px-5 md:px-10 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal order-2 lg:order-1">
+      <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-cyan)">DIGITAL FAN CARD</span>
+      <h2 class="display text-3xl md:text-5xl mt-4 mb-6">Your Laminate.<br>Your Proof Of Access.</h2>
+      <p class="mb-6 max-w-md" style="color:var(--text-muted)">Every FanExpress membership comes with a personal digital fan card — a holographic, scannable pass that proves who you are and what you've unlocked.</p>
+      <ul class="space-y-3 mb-8 text-sm">
+        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full gradient-bg"></span> Unique membership ID + QR code</li>
+        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full gradient-bg"></span> Verification badge tied to your tier</li>
+        <li class="flex items-center gap-3"><span class="w-2 h-2 rounded-full gradient-bg"></span> Issue &amp; expiry dates, always current</li>
+      </ul>
+      <button class="waBtn btn-primary px-7 py-4 rounded-full font-bold text-sm" data-msg="Hello FanExpress, I'd like to request my Fan Card. Please assist me with registration.">Request My Fan Card</button>
+    </div>
+
+    <div class="order-1 lg:order-2 flex justify-center reveal">
+      <div class="fan-pass w-72 md:w-80 p-6" id="showcaseFanCard">
+        <div class="notch" style="left:calc(50% - 12px)"></div>
+        <div class="relative z-10">
+          <div class="flex justify-between items-start mb-8">
+            <span class="mono text-[10px] tracking-widest" style="color:var(--accent-cyan)">FANEXPRESS PASS</span>
+            <div class="grommet"></div>
+          </div>
+          <p class="mono text-[10px] text-white/50 mb-1">MEMBER</p>
+          <p class="display text-2xl text-white leading-tight mb-1">JADE OKON</p>
+          <p class="mono text-[10px] text-white/60">FOR: DANTE VOLT · TIER: PREMIUM</p>
+          <div class="flex items-end justify-between mt-10">
+            <div class="qr-fake" id="showcaseQr"></div>
+            <div class="text-right">
+              <p class="mono text-[9px] text-white/50">ID · FX-40217</p>
+              <p class="mono text-[9px] text-white/50 mt-1">ISSUED 07/2026</p>
+              <p class="mono text-[9px] text-white/50">EXPIRES 07/2027</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MERCHANDISE STORE ============ -->
+<section id="store" class="max-w-7xl mx-auto px-5 md:px-10 py-24">
+  <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-pink)">MERCHANDISE STORE</span>
+    <h2 class="display text-3xl md:text-5xl mt-4">Official. Authentic.<br>Yours.</h2>
+  </div>
+  <div id="storeGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- ============ EVENTS ============ -->
+<section id="events" class="py-24" style="background:var(--bg-soft)">
+  <div class="max-w-7xl mx-auto px-5 md:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-gold)">UPCOMING EVENTS</span>
+      <h2 class="display text-3xl md:text-5xl mt-4">Be There. In Person<br>Or Online.</h2>
+    </div>
+    <div id="eventsGrid" class="grid md:grid-cols-2 gap-6"></div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-24">
+  <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-cyan)">HOW IT WORKS</span>
+    <h2 class="display text-3xl md:text-5xl mt-4">Four Steps To<br>Your Favorite Star.</h2>
+  </div>
+
+  <div class="grid md:grid-cols-4 gap-6">
+    <div class="card rounded-3xl p-7 reveal">
+      <p class="display text-4xl gradient-text mb-4">01</p>
+      <p class="font-bold mb-2">Browse</p>
+      <p class="text-sm" style="color:var(--text-muted)">Find your favorite celebrity across music, sports, film, comedy, or influencers.</p>
+    </div>
+    <div class="card rounded-3xl p-7 reveal">
+      <p class="display text-4xl gradient-text mb-4">02</p>
+      <p class="font-bold mb-2">Choose</p>
+      <p class="text-sm" style="color:var(--text-muted)">Pick a membership, a piece of merchandise, or an event to reserve.</p>
+    </div>
+    <div class="card rounded-3xl p-7 reveal">
+      <p class="display text-4xl gradient-text mb-4">03</p>
+      <p class="font-bold mb-2">Message Us</p>
+      <p class="text-sm" style="color:var(--text-muted)">Tap through to WhatsApp — your request arrives pre-filled and ready to send.</p>
+    </div>
+    <div class="card rounded-3xl p-7 reveal">
+      <p class="display text-4xl gradient-text mb-4">04</p>
+      <p class="font-bold mb-2">Confirm</p>
+      <p class="text-sm" style="color:var(--text-muted)">Complete payment and receive confirmation directly from our team.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QR PAYMENT ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-16">
+  <div class="card rounded-3xl p-8 md:p-14 grid lg:grid-cols-2 gap-12 items-center reveal">
+    <div>
+      <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-gold)">QR CODE PAYMENT</span>
+      <h2 class="display text-3xl md:text-4xl mt-4 mb-6">Scan. Pay.<br>Send Proof. Done.</h2>
+      <ol class="space-y-4 text-sm">
+        <li class="flex gap-3"><span class="mono font-bold" style="color:var(--accent-pink)">01</span> Scan the QR code provided for your order.</li>
+        <li class="flex gap-3"><span class="mono font-bold" style="color:var(--accent-pink)">02</span> Complete payment using your preferred method.</li>
+        <li class="flex gap-3"><span class="mono font-bold" style="color:var(--accent-pink)">03</span> Send proof of payment on WhatsApp.</li>
+        <li class="flex gap-3"><span class="mono font-bold" style="color:var(--accent-pink)">04</span> FanExpress confirms your order and activates your purchase.</li>
+      </ol>
+      <p class="text-xs mt-6" style="color:var(--text-muted)">Prefer to talk it through first? Full payment details are also available directly on WhatsApp.</p>
+    </div>
+    <div class="flex justify-center">
+      <div class="rounded-3xl p-8 flex flex-col items-center" style="background:var(--surface-2)">
+        <div class="qr-fake" style="width:180px; height:180px; padding:14px;" id="paymentQr"></div>
+        <p class="mono text-xs mt-4" style="color:var(--text-muted)">SCAN TO PAY</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY CHOOSE ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 py-24">
+  <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-pink)">WHY CHOOSE FANEXPRESS</span>
+    <h2 class="display text-3xl md:text-5xl mt-4">Built On Trust,<br>Not Guesswork.</h2>
+  </div>
+  <div id="whyGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="py-24" style="background:var(--bg-soft)">
+  <div class="max-w-7xl mx-auto px-5 md:px-10">
+    <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+      <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-cyan)">FAN STORIES</span>
+      <h2 class="display text-3xl md:text-5xl mt-4">Real Fans.<br>Real Access.</h2>
+    </div>
+    <div id="testiGrid" class="grid md:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="max-w-4xl mx-auto px-5 md:px-10 py-24">
+  <div class="text-center mb-14 reveal">
+    <span class="mono text-xs tracking-[0.3em]" style="color:var(--accent-gold)">FAQ</span>
+    <h2 class="display text-3xl md:text-5xl mt-4">Questions,<br>Answered.</h2>
+  </div>
+  <div id="faqList" class="space-y-3"></div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="max-w-7xl mx-auto px-5 md:px-10 pb-24">
+  <div class="rounded-3xl relative overflow-hidden p-10 md:p-20 text-center reveal" style="background: linear-gradient(120deg,#2b0e42,#150822 70%)">
+    <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full" style="background:var(--accent-pink); filter:blur(100px); opacity:.4"></div>
+    <div class="absolute -bottom-24 -right-24 w-72 h-72 rounded-full" style="background:var(--accent-cyan); filter:blur(100px); opacity:.3"></div>
+    <div class="relative z-10">
+      <h2 class="display text-3xl md:text-6xl text-white mb-6">Become Part Of<br>The Experience.</h2>
+      <p class="text-white/70 mb-10 max-w-lg mx-auto">Join FanExpress today and get closer to the stars you love — memberships, merchandise, and moments that matter.</p>
+      <button class="waBtn btn-primary px-8 py-4 rounded-full font-bold inline-flex items-center gap-2" data-msg="Hello FanExpress, I'd like to join FanExpress. Please assist me.">
+        Chat on WhatsApp
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t" style="border-color:var(--border)">
+  <div class="max-w-7xl mx-auto px-5 md:px-10 py-16 grid md:grid-cols-4 gap-10">
+    <div>
+      <span class="display text-lg tracking-widest">FAN<span class="gradient-text">EXPRESS</span></span>
+      <p class="text-sm mt-4" style="color:var(--text-muted)">Closer to the stars you love.</p>
+      <div class="flex gap-3 mt-5">
+        <a href="#" class="w-9 h-9 rounded-full btn-ghost flex items-center justify-center text-xs">IG</a>
+        <a href="#" class="w-9 h-9 rounded-full btn-ghost flex items-center justify-center text-xs">X</a>
+        <a href="#" class="w-9 h-9 rounded-full btn-ghost flex items-center justify-center text-xs">TT</a>
+      </div>
+    </div>
+    <div>
+      <p class="font-bold mb-4 text-sm">Company</p>
+      <ul class="space-y-2 text-sm" style="color:var(--text-muted)">
+        <li><a href="#" class="hover:underline">About</a></li>
+        <li><a href="#" class="hover:underline">Contact</a></li>
+        <li><a href="#" class="hover:underline">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-bold mb-4 text-sm">Legal</p>
+      <ul class="space-y-2 text-sm" style="color:var(--text-muted)">
+        <li><a href="#" class="hover:underline">Privacy Policy</a></li>
+        <li><a href="#" class="hover:underline">Terms &amp; Conditions</a></li>
+        <li><a href="#" class="hover:underline">Refund Policy</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-bold mb-4 text-sm">Get In Touch</p>
+      <ul class="space-y-2 text-sm mono" style="color:var(--text-muted)">
+        <li>hello@fanexpress.io</li>
+        <li>+234 000 000 0000</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t py-6 text-center text-xs mono" style="border-color:var(--border); color:var(--text-muted)">
+    © 2026 FanExpress. All rights reserved.
+  </div>
+</footer>
+
+<!-- Sticky mobile WhatsApp button -->
+<button class="waBtn whatsapp-btn fixed bottom-5 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-40" data-msg="Hello FanExpress, I'd like to join FanExpress. Please assist me." aria-label="Chat on WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.32 4.95L2 22l5.24-1.37a9.9 9.9 0 004.8 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2zm0 18.18h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.11.82.83-3.03-.2-.31a8.23 8.23 0 01-1.26-4.37c0-4.55 3.7-8.25 8.25-8.25 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 012.42 5.83c0 4.55-3.71 8.22-8.27 8.22zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.24-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14 0-.31-.01-.47-.01-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.06 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+</button>
+
+<script>
+/* ============ CONFIG ============ */
+// Replace with the real business WhatsApp number, digits only, country code first (no + or spaces).
+const WHATSAPP_NUMBER = "2340000000000";
+
+function waLink(message){
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.waBtn');
+  if(!btn) return;
+  window.open(waLink(btn.dataset.msg || "Hello FanExpress, I'd like more information. Please assist me."), '_blank');
+});
+document.getElementById('waNavBtn').addEventListener('click', () => {
+  window.open(waLink("Hello FanExpress, I'd like to join FanExpress. Please assist me."), '_blank');
+});
+
+/* ============ THEME TOGGLE ============ */
+const root = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const iconMoon = document.getElementById('iconMoon');
+const iconSun = document.getElementById('iconSun');
+function applyTheme(t){
+  root.classList.toggle('light', t === 'light');
+  iconMoon.classList.toggle('hidden', t === 'light');
+  iconSun.classList.toggle('hidden', t !== 'light');
+}
+const savedTheme = localStorage.getItem('fx-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+applyTheme(savedTheme);
+themeToggle.addEventListener('click', () => {
+  const next = root.classList.contains('light') ? 'dark' : 'light';
+  applyTheme(next);
+  localStorage.setItem('fx-theme', next);
+});
+
+/* ============ MOBILE MENU ============ */
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+/* ============ DATA ============ */
+const celebrities = [
+  { name:"Aria Nova", cat:"Music", bio:"Chart-topping vocalist blending pop with orchestral strings.", price:"$9.99/mo", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&q=75" },
+  { name:"Malik Reyes", cat:"Sports", bio:"All-star point guard turning assists into an art form.", price:"$12.99/mo", img:"https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=500&q=75" },
+  { name:"Selina Cruz", cat:"Film", bio:"Award-nominated actress known for raw, unfiltered roles.", price:"$15.99/mo", img:"https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=75" },
+  { name:"Jonah Pierce", cat:"Comedy", bio:"Stand-up comedian selling out arenas one punchline at a time.", price:"$7.99/mo", img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=75" },
+  { name:"Wren Okafor", cat:"Influencer", bio:"Lifestyle creator with 40M followers and zero filters.", price:"$6.99/mo", img:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&q=75" },
+  { name:"Dante Volt", cat:"Music", bio:"Electronic producer behind three global festival anthems.", price:"$10.99/mo", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=75" },
+];
+
+const celebGrid = document.getElementById('celebGrid');
+celebrities.forEach(c => {
+  celebGrid.insertAdjacentHTML('beforeend', `
+    <div class="card rounded-3xl overflow-hidden group reveal">
+      <div class="relative h-64 overflow-hidden">
+        <img src="${c.img}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+        <span class="absolute top-4 left-4 text-xs px-2 py-1 rounded-full glass font-semibold">✓ Verified</span>
+        <span class="absolute top-4 right-4 text-xs px-2 py-1 rounded-full gradient-bg text-[#160A1F] font-bold">${c.cat}</span>
+      </div>
+      <div class="p-6">
+        <h3 class="font-bold text-lg mb-1">${c.name}</h3>
+        <p class="text-sm mb-4" style="color:var(--text-muted)">${c.bio}</p>
+        <div class="flex items-center justify-between">
+          <span class="mono text-xs" style="color:var(--text-muted)">From ${c.price}</span>
+          <button class="waBtn text-xs font-bold px-4 py-2 rounded-full btn-ghost" data-msg="Hello FanExpress, I'd like to view ${c.name}'s profile. Please assist me.">View Profile</button>
+        </div>
+      </div>
+    </div>
+  `);
+});
+
+const plans = [
+  { name:"Basic", price:"$6.99", features:["Exclusive updates","Fan community access","News & announcements"] },
+  { name:"Premium", price:"$14.99", features:["Behind-the-scenes content","Early merchandise access","Live sessions","Premium updates"], featured:true },
+  { name:"VIP", price:"$39.99", features:["Personalized messages","Event priority","Digital membership certificate","Merchandise discounts","Exclusive VIP experiences"] },
+];
+const plansGrid = document.getElementById('plansGrid');
+plans.forEach(p => {
+  plansGrid.insertAdjacentHTML('beforeend', `
+    <div class="ticket rounded-3xl p-8 reveal ${p.featured ? 'gradient-ring' : 'card'}" ${p.featured ? 'style="padding:2px;"' : ''}>
+      <div class="${p.featured ? 'rounded-[22px] p-8 h-full' : ''}" style="${p.featured ? 'background:var(--surface);' : ''}">
+        ${p.featured ? '<span class="text-xs font-bold px-3 py-1 rounded-full gradient-bg text-[#160A1F] inline-block mb-4">MOST POPULAR</span>' : ''}
+        <p class="mono text-xs tracking-widest mb-2" style="color:var(--text-muted)">${p.name.toUpperCase()}</p>
+        <p class="display text-4xl mb-6">${p.price}<span class="text-sm" style="color:var(--text-muted)">/mo</span></p>
+        <ul class="space-y-3 mb-8 text-sm">
+          ${p.features.map(f => `<li class="flex items-start gap-2"><span class="gradient-text font-bold">✓</span> ${f}</li>`).join('')}
+        </ul>
+        <button class="waBtn w-full py-3 rounded-full font-bold text-sm ${p.featured ? 'btn-primary' : 'btn-ghost'}" data-msg="Hello FanExpress, I'd like to subscribe to the ${p.name} plan. Please assist me.">Subscribe via WhatsApp</button>
+      </div>
+    </div>
+  `);
+});
+
+const products = [
+  { name:"Official Hoodie", price:"$58", icon:"👕", desc:"Heavyweight fleece, embroidered tour logo." },
+  { name:"Tour Tee", price:"$32", icon:"👚", desc:"100% cotton, limited print run." },
+  { name:"Snapback Cap", price:"$28", icon:"🧢", desc:"Adjustable fit, gold-stitched crest." },
+  { name:"Signed Vinyl Album", price:"$65", icon:"💿", desc:"Hand-signed, individually numbered." },
+  { name:"Limited Poster", price:"$18", icon:"🖼️", desc:"Museum-grade matte print, A2 size." },
+  { name:"Charm Bracelet", price:"$22", icon:"📿", desc:"Stainless steel, fan-tier engraving." },
+  { name:"Holo Phone Case", price:"$26", icon:"📱", desc:"Iridescent finish, drop-tested." },
+  { name:"Signed Memorabilia", price:"$120", icon:"🏆", desc:"Authenticated collector's piece." },
+  { name:"Sticker Pack", price:"$9", icon:"✨", desc:"Set of 8 die-cut foil stickers." },
+];
+const storeGrid = document.getElementById('storeGrid');
+products.forEach(p => {
+  storeGrid.insertAdjacentHTML('beforeend', `
+    <div class="card rounded-3xl p-6 reveal">
+      <div class="w-full h-40 rounded-2xl flex items-center justify-center text-5xl mb-5" style="background:linear-gradient(135deg, var(--surface-2), var(--bg-soft))">${p.icon}</div>
+      <div class="flex items-start justify-between mb-2">
+        <h3 class="font-bold">${p.name}</h3>
+        <span class="mono font-bold gradient-text">${p.price}</span>
+      </div>
+      <p class="text-sm mb-5" style="color:var(--text-muted)">${p.desc}</p>
+      <button class="waBtn whatsapp-btn w-full py-3 rounded-full text-sm font-bold" data-msg="Hello FanExpress, I'd like to order the ${p.name}.">Buy on WhatsApp</button>
+    </div>
+  `);
+});
+
+const events = [
+  { title:"Nova: Solaris Tour", type:"Concert", place:"Eko Arena, Lagos", date:"Aug 14, 2026" },
+  { title:"Meet Malik Reyes", type:"Meet & Greet", place:"Lagos Convention Centre", date:"Aug 22, 2026" },
+  { title:"Selina Cruz: Premiere Night", type:"Movie Premiere", place:"Virtual Screening", date:"Sep 3, 2026" },
+  { title:"Dante Volt: Sunset Sessions", type:"Virtual Fan Session", place:"Online", date:"Aug 30, 2026" },
+];
+const eventsGrid = document.getElementById('eventsGrid');
+events.forEach(e => {
+  eventsGrid.insertAdjacentHTML('beforeend', `
+    <div class="card rounded-3xl p-7 flex items-center justify-between gap-4 reveal">
+      <div>
+        <span class="text-xs px-2 py-1 rounded-full gradient-bg text-[#160A1F] font-bold">${e.type}</span>
+        <h3 class="font-bold text-lg mt-3">${e.title}</h3>
+        <p class="text-sm" style="color:var(--text-muted)">${e.place} · ${e.date}</p>
+      </div>
+      <button class="waBtn btn-ghost px-5 py-3 rounded-full text-sm font-bold whitespace-nowrap" data-msg="Hello FanExpress, I'd like to reserve a spot for ${e.title}.">Reserve via WhatsApp</button>
+    </div>
+  `);
+});
+
+const whys = [
+  { icon:"✓", title:"Verified Celebrities", desc:"Every profile is checked and confirmed." },
+  { icon:"🛡️", title:"Authentic Merchandise", desc:"Officially licensed, never counterfeit." },
+  { icon:"🎟️", title:"Exclusive Memberships", desc:"Access you can't find anywhere else." },
+  { icon:"🔒", title:"Safe Payment Process", desc:"Guided, confirmed, and transparent." },
+  { icon:"💬", title:"Direct Fan Engagement", desc:"Real replies from a real team." },
+  { icon:"⚡", title:"Fast Customer Support", desc:"WhatsApp responses, not ticket queues." },
+  { icon:"🌟", title:"Trusted Platform", desc:"Built for fans, backed by celebrities." },
+];
+const whyGrid = document.getElementById('whyGrid');
+whys.forEach(w => {
+  whyGrid.insertAdjacentHTML('beforeend', `
+    <div class="card rounded-3xl p-6 reveal">
+      <div class="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-xl mb-4">${w.icon}</div>
+      <h3 class="font-bold mb-1">${w.title}</h3>
+      <p class="text-sm" style="color:var(--text-muted)">${w.desc}</p>
+    </div>
+  `);
+});
+
+const testimonials = [
+  { name:"Chidinma A.", quote:"Got my Aria Nova fan card in a day and front-row tickets before they were public. Feels legit.", stars:5 },
+  { name:"Ifeanyi O.", quote:"Ordered a signed jersey through WhatsApp — easiest checkout I've ever done, and it arrived exactly as described.", stars:5 },
+  { name:"Blessing U.", quote:"The VIP membership replies feel personal. My questions get answered by an actual human within minutes.", stars:4 },
+];
+const testiGrid = document.getElementById('testiGrid');
+testimonials.forEach(t => {
+  testiGrid.insertAdjacentHTML('beforeend', `
+    <div class="card rounded-3xl p-7 reveal">
+      <p class="mb-5" style="color:var(--text-muted)">"${t.quote}"</p>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center font-bold text-sm text-[#160A1F]">${t.name.charAt(0)}</div>
+        <div>
+          <p class="font-bold text-sm">${t.name}</p>
+          <p class="text-xs" style="color:var(--accent-gold)">${'★'.repeat(t.stars)}${'☆'.repeat(5 - t.stars)}</p>
+        </div>
+      </div>
+    </div>
+  `);
+});
+
+const faqs = [
+  { q:"How do memberships work?", a:"Choose a tier (Basic, Premium, or VIP) on a celebrity's profile, tap Subscribe via WhatsApp, and our team will guide you through activation." },
+  { q:"Is the merchandise authentic?", a:"Yes — every product is officially licensed and sourced directly from the celebrity or their management team." },
+  { q:"What payment methods are accepted?", a:"Bank transfer, card payment, and QR code scan. Full details are shared with you directly on WhatsApp for your order." },
+  { q:"How long does delivery take?", a:"Merchandise typically ships within 5–10 business days, depending on your location. Digital items like fan cards are issued within 24 hours." },
+  { q:"What is the refund policy?", a:"Physical items can be returned within 7 days if unused and in original packaging. Memberships and event reservations are non-refundable once confirmed." },
+  { q:"How do I get my digital fan card?", a:"Tap Request My Fan Card, share your details on WhatsApp, and your card — complete with QR code and membership ID — will be issued within a day." },
+];
+const faqList = document.getElementById('faqList');
+faqs.forEach((f,i) => {
+  faqList.insertAdjacentHTML('beforeend', `
+    <details class="card rounded-2xl px-6 py-2 reveal" ${i===0 ? 'open' : ''}>
+      <summary class="flex items-center justify-between py-4 font-bold text-sm md:text-base">
+        ${f.q}
+        <span class="chev transition-transform text-xl" style="color:var(--accent-pink)">+</span>
+      </summary>
+      <p class="pb-5 text-sm" style="color:var(--text-muted)">${f.a}</p>
+    </details>
+  `);
+});
+
+/* ============ FAKE QR PATTERNS ============ */
+function paintQr(el, cells){
+  if(!el) return;
+  const n = 36;
+  let html = '';
+  const seed = cells || 0;
+  for(let i=0;i<n;i++){
+    const on = ((i * 7 + seed) % 5) < 2;
+    html += `<span style="opacity:${on ? 1 : 0}"></span>`;
+  }
+  el.innerHTML = html;
+}
+paintQr(document.getElementById('heroQr'), 3);
+paintQr(document.getElementById('showcaseQr'), 5);
+const paymentQr = document.getElementById('paymentQr');
+if(paymentQr){
+  paymentQr.style.gridTemplateColumns = 'repeat(10,1fr)';
+  let html = '';
+  for(let i=0;i<100;i++){
+    const on = ((i * 13 + 7) % 5) < 2;
+    html += `<span style="opacity:${on ? 1 : 0}"></span>`;
+  }
+  paymentQr.innerHTML = html;
+}
+
+/* ============ FAN CARD TILT ============ */
+function attachTilt(el){
+  if(!el) return;
+  el.addEventListener('mousemove', (e) => {
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.setProperty('--tiltY', `${x * 16}deg`);
+    el.style.setProperty('--tiltX', `${-y * 16}deg`);
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.setProperty('--tiltX', '0deg');
+    el.style.setProperty('--tiltY', '0deg');
+  });
+}
+attachTilt(document.getElementById('heroFanCard'));
+attachTilt(document.getElementById('showcaseFanCard'));
+
+/* ============ SCROLL REVEAL ============ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
