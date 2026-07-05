@@ -1,9 +1,9 @@
 /* ============ CONFIG ============ */
 // Replace with the real business WhatsApp number, digits only, country code first (no + or spaces).
-const WHATSAPP_NUMBER = "2340000000000";
+const WHATSAPP_NUMBER = "2348075755457";
 
 function waLink(message){
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${2348075755457}?text=${encodeURIComponent(message)}`;
 }
 
 document.addEventListener('click', (e) => {
