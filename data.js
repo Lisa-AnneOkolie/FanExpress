@@ -7,7 +7,7 @@ const celebrities = [
     category: "Music",
     tagline: "Pop / Orchestral",
     bio: "Chart-topping vocalist blending pop with orchestral strings.",
-    about: "Aria Nova is a chart-topping vocalist known for weaving orchestral strings through modern pop. Since her debut EP, she's built one of the most devoted fan communities on FanExpress — the Novanites.",
+    about: "Aria Nova is a chart-topping vocalist known for weaving orchestral strings through modern pop. Since her debut EP, she's built one of the most devoted fan communities on FanExpress.",
     avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&q=80",
     cover: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=1400&q=70",
     price: "$9.99/mo",
