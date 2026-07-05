@@ -48,7 +48,7 @@ if(!celeb){
           </div>
           <button class="waBtn whatsapp-btn px-6 py-3 rounded-full text-sm font-bold flex items-center gap-2 self-start md:self-auto" data-msg="Hello FanExpress, I'd like to subscribe to ${celeb.name}. Please assist me.">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.45 1.32 4.95L2 22l5.24-1.37a9.9 9.9 0 004.8 1.22h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2zm0 18.18h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.11.82.83-3.03-.2-.31a8.23 8.23 0 01-1.26-4.37c0-4.55 3.7-8.25 8.25-8.25 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 012.42 5.83c0 4.55-3.71 8.22-8.27 8.22zm4.52-6.16c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.15.16-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.24-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14 0-.31-.01-.47-.01-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.06 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
-            Chat on WhatsApp
+            Chat With Us
           </button>
         </div>
 
@@ -126,7 +126,7 @@ if(!celeb){
           <p class="mono text-xs tracking-widest mb-2" style="color:var(--text-muted)">${m.tier.toUpperCase()}</p>
           <p class="display text-4xl mb-4">${m.price}<span class="text-sm" style="color:var(--text-muted)">/mo</span></p>
           <p class="text-sm mb-8" style="color:var(--text-muted)">${m.perk}</p>
-          <button class="waBtn w-full py-3 rounded-full font-bold text-sm ${featured ? 'btn-primary' : 'btn-ghost'}" data-msg="Hello FanExpress, I'd like to subscribe to ${celeb.name}'s ${m.tier} plan. Please assist me.">Subscribe via WhatsApp</button>
+          <button class="waBtn w-full py-3 rounded-full font-bold text-sm ${featured ? 'btn-primary' : 'btn-ghost'}" data-msg="Hello FanExpress, I'd like to subscribe to ${celeb.name}'s ${m.tier} plan. Please assist me.">Subscribe</button>
         </div>
       </div>
     `);
@@ -144,7 +144,7 @@ if(!celeb){
             <span class="mono font-bold gradient-text">${p.price}</span>
           </div>
           <p class="text-sm mb-4" style="color:var(--text-muted)">${p.desc}</p>
-          <button class="waBtn whatsapp-btn px-5 py-2.5 rounded-full text-xs font-bold" data-msg="Hello FanExpress, I'd like to order the ${p.name}.">Buy on WhatsApp</button>
+          <button class="waBtn whatsapp-btn px-5 py-2.5 rounded-full text-xs font-bold" data-msg="Hello FanExpress, I'd like to order the ${p.name}.">Buy</button>
         </div>
       </div>
     `);
@@ -160,7 +160,7 @@ if(!celeb){
           <h3 class="font-bold text-lg mt-3">${e.title}</h3>
           <p class="text-sm" style="color:var(--text-muted)">${e.place} · ${e.date}</p>
         </div>
-        <button class="waBtn btn-ghost px-5 py-3 rounded-full text-sm font-bold whitespace-nowrap" data-msg="Hello FanExpress, I'd like to reserve a spot for ${e.title}.">Reserve via WhatsApp</button>
+        <button class="waBtn btn-ghost px-5 py-3 rounded-full text-sm font-bold whitespace-nowrap" data-msg="Hello FanExpress, I'd like to reserve a spot for ${e.title}.">Reserve</button>
       </div>
     `);
   });
